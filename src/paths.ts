@@ -141,5 +141,10 @@ export const Paths = {
   },
   rpm: {
     package: { list: '/rpm/rpms' },
+    repository: {
+      detail: '/rpm/repositories/detail/:name',
+      edit: '/rpm/repositories/edit/:name',
+      list: '/rpm/repositories',
+    },
   },
 };

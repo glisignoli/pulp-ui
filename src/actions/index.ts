@@ -20,3 +20,4 @@ export { fileRepositoryCreateAction } from './file-repository-create';
 export { fileRepositoryDeleteAction } from './file-repository-delete';
 export { fileRepositoryEditAction } from './file-repository-edit';
 export { fileRepositorySyncAction } from './file-repository-sync';
+export { rpmRepositoryCreateAction } from './rpm-repository-create';
