@@ -39,6 +39,7 @@ export { default as EditRole } from './role-management/role-edit';
 export { default as RoleList } from './role-management/role-list';
 export { default as RPMPackageList } from './rpm/package-list';
 export { default as RPMRepositoryList } from './rpm-repository/list';
+export { default as RpmRepositoryEdit } from './rpm-repository/edit';
 export { default as MultiSearch } from './search/multi-search';
 export { default as Search } from './search/search';
 export { default as UserProfile } from './settings/user-profile';
