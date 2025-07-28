@@ -1,6 +1,6 @@
 import { PulpAPI } from './pulp';
 
-export class FileRemoteType {
+export class FileRemoteType{
   ca_cert: string;
   client_cert: string;
   download_concurrency: number;

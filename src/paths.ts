@@ -105,6 +105,11 @@ export const Paths = {
       edit: '/rpm/repositories/edit/:name',
       list: '/rpm/repositories',
     },
+    remote: {
+      detail: '/rpm/remotes/detail/:name',
+      edit: '/rpm/remotes/edit/:name',
+      list: '/rpm/remotes',
+    }
   },
   core: {
     group: {

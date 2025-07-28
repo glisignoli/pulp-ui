@@ -1,9 +1,10 @@
 import { msg, t } from '@lingui/core/macro';
 import {
+  RPMDistributionAPI,
   RPMRepositoryAPI,
   type RPMRepositoryType,
 } from 'src/api';
-import { Page, RepositoryForm } from 'src/components';
+import { Page, RPMRepositoryForm } from 'src/components';
 import { Paths, formatPath } from 'src/paths';
 import { parsePulpIDFromURL, taskAlert } from 'src/utilities';
 
@@ -58,7 +59,7 @@ const RpmRepositoryEdit = Page<RPMRepositoryType>({
       return null;
     }
 
-    const saveRepository = () => {
+    const saveRepository = ({ createDistribution }) => {
       const { repositoryToEdit } = state;
 
       const data = { ...repositoryToEdit };
@@ -79,7 +80,7 @@ const RpmRepositoryEdit = Page<RPMRepositoryType>({
 
       data.pulp_labels ||= {};
 
-      const promise = !item
+      let promise = !item
         ? RPMRepositoryAPI.create(data).then(({ data: newData }) => {
             queueAlert({
               variant: 'success',
@@ -98,6 +99,39 @@ const RpmRepositoryEdit = Page<RPMRepositoryType>({
 
             return item.pulp_href;
           });
+      
+      if (createDistribution) {
+        // only alphanumerics, slashes, underscores and dashes are allowed in base_path, transform anything else to _
+        const basePathTransform = (name) =>
+          name.replaceAll(/[^-a-zA-Z0-9_/]/g, '_');
+        let distributionName = data.name;
+
+        promise = promise
+          .then((pulp_href) =>
+            RPMDistributionAPI.create({
+              name: distributionName,
+              base_path: basePathTransform(distributionName),
+              repository: pulp_href,
+            }).catch(() => {
+              // if distribution already exists, try a numeric suffix to name & base_path
+              distributionName =
+                data.name + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+              return RPMDistributionAPI.create({
+                name: distributionName,
+                base_path: basePathTransform(distributionName),
+                repository: pulp_href,
+              });
+            }),
+          )
+          .then(({ data: task }) =>
+            queueAlert(
+              taskAlert(
+                task,
+                t`Creation started for distribution ${distributionName}`,
+              ),
+            ),
+          );
+      }
 
       promise
         .then(() => {
@@ -134,7 +168,7 @@ const RpmRepositoryEdit = Page<RPMRepositoryType>({
     };
 
     return (
-      <RepositoryForm
+      <RPMRepositoryForm
         allowEditName={!item}
         errorMessages={errorMessages}
         onCancel={closeModal}
